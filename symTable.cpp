@@ -95,7 +95,8 @@ Symbol_ptr Symbol_table::lookup(char * id){
 }
 
 Symbol_ptr Symbol_table::insert(char * id){
-	int index = hash(id);
+	
+		int index = hash(id);
 	Symbol_ptr location = lookup(id);
 
 	/*if the id is not found then insert the stuff

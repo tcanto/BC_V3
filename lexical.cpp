@@ -54,7 +54,8 @@ int lookup(char ch)
 /* addChar - a function to add nextChar to lexeme */
 void addChar() 
 {
-   if (lexLen <= 98) {
+   if (lexLen <= 98) 
+   {
       lexeme[lexLen++] = nextChar;
       lexeme[lexLen] = '\0';
    } else
@@ -106,11 +107,15 @@ int lex()
 	  
 				   addChar();
                    getChar();
-					
 					break;
 	case QUIT:
 				cout<<"exit"<<endl;
-				//exit(0);
+				   lexeme[0] = 'q';
+                   lexeme[1] = 'u';
+                   lexeme[2] = 'i';
+				   lexeme[3] = 't';
+                   lexeme[4] = '\0';
+				nextToken=QUIT;
 				break;
 					
 	 /* Parse identifiers - once you find the first
@@ -161,7 +166,7 @@ int lex()
    if (lexeme[0]=='q'&&lexeme[1]=='u'&&lexeme[2]=='i'&&lexeme[3]=='t')
    {
    //exit(0);
-   cout<<"quitend"<<endl;
+   //cout<<"quitend"<<endl;
    }
    
    return nextToken;

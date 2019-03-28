@@ -25,7 +25,7 @@ VALUE val;
    /* As long as the next token is + or -, get
       the next token and parse the next term */
    while (nextToken == ADD_OP || nextToken == SUB_OP) {
-      lex();
+	  lex();
       term();
    }
    printf("Exit <expr>\n");
@@ -94,7 +94,7 @@ void factor()
 		lex();
 		expr();
 		}
-}
+	}else{expr();}
 	 printf("Exit <stmt>\n");
 }
 
