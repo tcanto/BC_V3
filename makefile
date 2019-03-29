@@ -1,7 +1,7 @@
 CC=g++
 
-all:
-	${CC} main.cpp lexical.cpp symTable.cpp top-down.cpp
+bc:
+	${CC} -o bc main.cpp lexical.cpp symTable.cpp top-down.cpp
 
 clean:
-	rm a.out
+	rm bc

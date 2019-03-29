@@ -5,49 +5,58 @@
 using namespace std;
 
 //default node constructor
-Symbol_node::Symbol_node(){
+Symbol_node::Symbol_node()
+{
 	next = NULL;
 }
 
 //node constructor
-Symbol_node::Symbol_node(char * id){
-   this->id = new char[strlen(id)+1];
-	strcpy(this->id,id);
+Symbol_node::Symbol_node(char *id)
+{
+	this->id = new char[strlen(id) + 1];
+	strcpy(this->id, id);
 }
 
 //fetch id of an element in the symbol table
-char * Symbol_node::getid(){
+char *Symbol_node::getid()
+{
 	return id;
 }
 
 //set value of an element in the symbol table
-void Symbol_node::putval(VALUE val){
-	value = val;	
+void Symbol_node::putval(VALUE val)
+{
+	value = val;
 }
 
 //fetch value of an element in the symbol table
-VALUE Symbol_node::getval(){
+VALUE Symbol_node::getval()
+{
 	return value;
 }
 
 //default table constructor
-Symbol_table::Symbol_table(){
-	table = new Symbol_ptr [TABLE_SIZE];
-	for (int i=0; i<TABLE_SIZE; i++)
+Symbol_table::Symbol_table()
+{
+	table = new Symbol_ptr[TABLE_SIZE];
+	for (int i = 0; i < TABLE_SIZE; i++)
 		table[i] = NULL;
 }
 
 //table destructor
-Symbol_table::~Symbol_table(){
-	delete []table;
+Symbol_table::~Symbol_table()
+{
+	delete[] table;
 }
 
 //hash function
-int Symbol_table::hash(char * id){
+int Symbol_table::hash(char *id)
+{
 	int val = 0;
-	
-	for (int i=0; i<strlen(id); i++){
-		val += id[i] * (i+1) * TABLE_SIZE;
+
+	for (int i = 0; i < strlen(id); i++)
+	{
+		val += id[i] * (i + 1) * TABLE_SIZE;
 	}
 
 	val %= TABLE_SIZE;
@@ -55,35 +64,39 @@ int Symbol_table::hash(char * id){
 }
 
 //print function to print symbol table element values
-void Symbol_table::print(Symbol_node* head){
-	cout << head << "\t" << head->id << "\t" << head->value.ivalue << endl;	
+void Symbol_table::print(Symbol_node *head)
+{
+	cout << "   " << head->id << " = " << head->value.ivalue << endl;
 }
 
 //dump table function to print whole table
-void Symbol_table::dump_table(){
-	cout << endl;
-	cout << "Location\tid\tvalue" << endl;
-	cout << "--------\t--\t-----" << endl;
-	for(int i=0; i<TABLE_SIZE; i++){
-		Symbol_node* head = table[i];
-		while(head != NULL){
+void Symbol_table::dump_table()
+{
+	cout << "======================" << endl;
+	for (int i = 0; i < TABLE_SIZE; i++)
+	{
+		Symbol_node *head = table[i];
+		while (head != NULL)
+		{
 			print(head);
 			head = head->next;
 		}
 	}
-	cout << endl;
+	cout << "======================" << endl;
 }
 
 //lookup an id within the symbol table
-Symbol_ptr Symbol_table::lookup(char * id){
+Symbol_ptr Symbol_table::lookup(char *id)
+{
 	int index = hash(id);
 	//memory location of the element
 	Symbol_ptr head = table[index];
-	
+
 	if (head == NULL)
 		return NULL;
 
-	while (head != NULL){
+	while (head != NULL)
+	{
 		//if the two are equal then return the location
 		if (strcmp(id, head->id) == 0)
 			return head;
@@ -94,17 +107,19 @@ Symbol_ptr Symbol_table::lookup(char * id){
 	return NULL;
 }
 
-Symbol_ptr Symbol_table::insert(char * id){
-	
-		int index = hash(id);
+Symbol_ptr Symbol_table::insert(char *id)
+{
+
+	int index = hash(id);
 	Symbol_ptr location = lookup(id);
 
 	/*if the id is not found then insert the stuff
 	at the beginning of the linked list*/
-	if(location == NULL){
+	if (location == NULL)
+	{
 		Symbol_ptr stuff = new Symbol_node(id);
-		stuff->next=table[index];
-		table[index]=stuff;
+		stuff->next = table[index];
+		table[index] = stuff;
 		return stuff;
 	}
 

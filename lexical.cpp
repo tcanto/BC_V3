@@ -1,66 +1,74 @@
 #include "general.h"
+#include "symTable.h"
 
-char lexeme [100];
+Symbol_table table;
+
+char lexeme[100];
 char nextChar;
 int lexLen;
-FILE *in_fp, *fopen();
 /* lookup - a function to lookup operators and parentheses
  and return the token */
-int lookup(char ch) 
+int lookup(char ch)
 {
-   switch (ch) {
-      case '(':
-                addChar();
-                nextToken = LEFT_PAREN;
-                break;
-      case ')':
-                addChar();
-                nextToken = RIGHT_PAREN;
-                break;
-      case '+':
-                addChar();
-                nextToken = ADD_OP;
-                break;
-      case '-':
-                addChar();
-                nextToken = SUB_OP;
-                break;
-      case '*':
-                addChar();
-                nextToken = MULT_OP;
-                break;
-      case '/':
-                addChar();
-                nextToken = DIV_OP;
-                break;
-	  case '\n':	
-				addChar();
-                nextToken = NEWLINE;
-                break;
-	  case '=':
-				addChar();
-                nextToken = ASSIGN_OP;
-                break;
-      default:
-                addChar();
-                nextToken = EOF;
-                break;
- 
+   switch (ch)
+   {
+   case '(':
+      addChar();
+      nextToken = LEFT_PAREN;
+      break;
+   case ')':
+      addChar();
+      nextToken = RIGHT_PAREN;
+      break;
+   case '+':
+      addChar();
+      nextToken = ADD_OP;
+      break;
+   case '-':
+      addChar();
+      nextToken = SUB_OP;
+      break;
+   case '*':
+      addChar();
+      nextToken = MULT_OP;
+      break;
+   case '/':
+      addChar();
+      nextToken = DIV_OP;
+      break;
+   case '%':
+      addChar();
+      nextToken = MOD_OP;
+      break;
+   case '^':
+      addChar();
+      nextToken = EXPO_OP;
+      break;
+   case '=':
+      addChar();
+      nextToken = ASSIGN_OP;
+      break;
+   default:
+      addChar();
+      nextToken = EOF;
+      break;
    }
    return nextToken;
 }
 
 /*****************************************************/
 /* addChar - a function to add nextChar to lexeme */
-void addChar() 
+void addChar()
 {
-   if (lexLen <= 98) 
+   if (lexLen <= 98)
    {
       lexeme[lexLen++] = nextChar;
       lexeme[lexLen] = '\0';
-   } else
+   }
+   else
       printf("Error - lexeme is too long \n");
 }
+
 /*****************************************************/
 /* getChar - a function to get the next character of
    input and determine its character class 
@@ -68,17 +76,27 @@ void addChar()
    nextChar - the next character scanned from the input.
    charClass - the category of the character - LETTER, DiGIT, OPERATOR
 */
-void getChar() 
+void getChar()
 {
-   if ((cin.get(nextChar))) 
+   if (cin.get(nextChar))
    {
       if (isalpha(nextChar))
+      {
+         // if (nextChar == 'q')
+         //    charClass = QUIT;
+         // else if (nextChar == 'd')
+         //    charClass = DUMP;
+         // else
          charClass = LETTER;
+      }
       else if (isdigit(nextChar))
          charClass = DIGIT;
-      else 
+      else if (nextChar == '\n')
+         charClass = NEWLINE;
+      else
          charClass = OPERATOR;
-   } else
+   }
+   else
       charClass = EOF;
 }
 /*****************************************************/
@@ -87,87 +105,86 @@ void getChar()
    character.
    nextChar will be set to the next non-whitespace char.
 */
-void getNonBlank() 
+void getNonBlank()
 {
-   while (isspace(nextChar))
+   while (nextChar == ' ')
       getChar();
 }
-
 
 /*****************************************************/
 /* lex - a simple lexical analyzer for arithmetic
  expressions */
-int lex() 
+int lex()
 {
    lexLen = 0;
    getNonBlank();
-   switch (charClass){
-    
-      case NEWLINE:
-	  
-				   addChar();
-                   getChar();
-					break;
-	case QUIT:
-				cout<<"exit"<<endl;
-				   lexeme[0] = 'q';
-                   lexeme[1] = 'u';
-                   lexeme[2] = 'i';
-				   lexeme[3] = 't';
-                   lexeme[4] = '\0';
-				nextToken=QUIT;
-				break;
-					
-	 /* Parse identifiers - once you find the first
+   switch (charClass)
+   {
+
+   case NEWLINE:
+      break;
+
+   case QUIT:
+      nextToken = QUIT;
+      break;
+
+   case DUMP:
+      nextToken = DUMP;
+      break;
+
+      /* Parse identifiers - once you find the first
          letter, read and add char by char to lexeme. */
-	  case LETTER:
-                   addChar();
-                   getChar();
-                   /* After first char, you may use either char or digits */ 
-                   while (charClass == LETTER || charClass == DIGIT) {
-                      addChar();
-                      getChar();
-                   }
-                   nextToken = IDENT;
-                   break;
+   case LETTER:
+      addChar();
+      getChar();
+      /* After first char, you may use either char or digits */
+      while (charClass == LETTER || charClass == DIGIT)
+      {
+         addChar();
+         getChar();
+      }
+      if (strcmp(lexeme, "quit") == 0)
+         nextToken = QUIT;
+      else if (strcmp(lexeme, "dump") == 0)
+         nextToken = DUMP;
+      else
+      {
+         table.insert(lexeme);
+         nextToken = IDENT;
+      }
+      break;
 
-      /* Parse integer literals - once you find the first
-         digit, read and add digits to lexeme. */
-      case DIGIT:
-                   addChar();
-                   getChar();
-                   while (charClass == DIGIT) {
-                      addChar();
-                      getChar();
-                   }
-                   nextToken = INT_LIT;
-                   break;
+   /* Parse integer literals - once you find the first
+      digit, read and add digits to lexeme. */
+   case DIGIT:
+      addChar();
+      getChar();
+      while (charClass == DIGIT)
+      {
+         addChar();
+         getChar();
+      }
+      nextToken = INT_LIT;
+      break;
 
-      /* Parentheses and operators */
-      case OPERATOR:
-                   /* Call lookup to identify the type of operator */
-                   lookup(nextChar);
-                   getChar();
-                   break;
-      /* EOF */
-      case EOF:
-                   nextToken = EOF;
-                   lexeme[0] = 'E';
-                   lexeme[1] = 'O';
-                   lexeme[2] = 'F';
-                   lexeme[3] = '\0';
-                   break;
-                   
+   /* Parentheses and operators */
+   case OPERATOR:
+      /* Call lookup to identify the type of operator */
+      lookup(nextChar);
+      getChar();
+      break;
+   /* EOF */
+   case EOF:
+      nextToken = EOF;
+      lexeme[0] = 'E';
+      lexeme[1] = 'O';
+      lexeme[2] = 'F';
+      lexeme[3] = '\0';
+      break;
+
    } /* End of switch */
 
+   //printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
 
-   printf("Next token is: %d, Next lexeme is %s\n", nextToken, lexeme);
-   
-   if (lexeme[0]=='q'&&lexeme[1]=='u'&&lexeme[2]=='i'&&lexeme[3]=='t')
-   {
-   //exit(0);
-   //cout<<"quitend"<<endl;
-   }
-   
    return nextToken;
-} 
+}
