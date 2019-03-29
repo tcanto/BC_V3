@@ -30,6 +30,7 @@ extern int lex();
 
 int expr();
 int term();
+int unary();
 int expo();
 int factor();
 void error(const char *);
@@ -57,6 +58,7 @@ extern int nextToken;
 #define LEFT_PAREN 26
 #define RIGHT_PAREN 27
 #define EXPO_OP 28
+#define UNARY_MINUS 29
 #define NEWLINE 96
 #define DUMP 900
 #define QUIT 8

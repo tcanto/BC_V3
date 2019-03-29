@@ -81,14 +81,7 @@ void getChar()
    if (cin.get(nextChar))
    {
       if (isalpha(nextChar))
-      {
-         // if (nextChar == 'q')
-         //    charClass = QUIT;
-         // else if (nextChar == 'd')
-         //    charClass = DUMP;
-         // else
          charClass = LETTER;
-      }
       else if (isdigit(nextChar))
          charClass = DIGIT;
       else if (nextChar == '\n')
@@ -116,6 +109,7 @@ void getNonBlank()
  expressions */
 int lex()
 {
+   token = nextToken;
    lexLen = 0;
    getNonBlank();
    switch (charClass)
@@ -124,16 +118,8 @@ int lex()
    case NEWLINE:
       break;
 
-   case QUIT:
-      nextToken = QUIT;
-      break;
-
-   case DUMP:
-      nextToken = DUMP;
-      break;
-
-      /* Parse identifiers - once you find the first
-         letter, read and add char by char to lexeme. */
+   /* Parse identifiers - once you find the first
+      letter, read and add char by char to lexeme. */
    case LETTER:
       addChar();
       getChar();
@@ -143,10 +129,12 @@ int lex()
          addChar();
          getChar();
       }
+      /* handles quit and dump */
       if (strcmp(lexeme, "quit") == 0)
          nextToken = QUIT;
       else if (strcmp(lexeme, "dump") == 0)
          nextToken = DUMP;
+      /* puts id into symbol table */
       else
       {
          table.insert(lexeme);
