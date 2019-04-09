@@ -1,45 +1,49 @@
 #ifndef gen_h
 #define gen_h
 #define TABLE_SIZE 211
-#include<iostream>
-#include<stdio.h>
-#include<ctype.h>
+#include <iostream>
+#include <stdio.h>
+#include <ctype.h>
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
+
 using namespace std;
+
 typedef union {
    int ivalue;
    char cvalue;
    double dvalue;
 } VALUE;
 
-
-
 /* Global declarations */
 /* Variables */
-extern char lexeme [100];  
-extern char nextChar;     
+extern char lexeme[100];
+extern char nextChar;
 extern int lexLen;
 extern FILE *in_fp, *fopen();
 
-
-/* Function declarations */ 
+/* Function declarations */
 
 void addChar();
 void getChar();
 void getNonBlank();
 extern int lex();
 
-void expr();
-void term();
-void factor();
+int expr();
+int term();
+int unary();
+int expo();
+int factor();
 void error(const char *);
 
-void stmt_list();
- void stmt();
+int stmt_list();
+int stmt();
 
 /* Character classes */
 extern int charClass;
-#define LETTER 0
-#define DIGIT 1
+#define LETTER 2
+#define DIGIT 3
 #define OPERATOR 99
 
 /* Token codes */
@@ -52,10 +56,15 @@ extern int nextToken;
 #define SUB_OP 22
 #define MULT_OP 23
 #define DIV_OP 24
-#define LEFT_PAREN 25
-#define RIGHT_PAREN 26
+#define MOD_OP 25
+#define LEFT_PAREN 26
+#define RIGHT_PAREN 27
+#define EXPO_OP 28
+#define UNARY_MINUS 29
 #define NEWLINE 96
 #define DUMP 900
 #define QUIT 8
+
+#define DEBUG
 
 #endif
